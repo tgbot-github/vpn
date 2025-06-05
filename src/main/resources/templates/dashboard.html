@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiVPN - Личный кабинет</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/icon.svg}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+        body {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .logo a:hover {
+            opacity: 1;
+        }
+        .logo-icon {
+            margin-right: 0.75rem;
+        }
+        .user-identifier {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        .copy-icon {
+            transition: all 0.3s ease;
+        }
+        .copy-icon.copied {
+            color: #10B981;
+        }
+        .plan-card {
+            transition: all 0.3s ease;
+        }
+        .plan-card.selected {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .copy-btn {
+            transition: all 0.3s ease;
+        }
+        .copy-btn.copied {
+            background: #10B981 !important;
+        }
+        .copy-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .modal-content {
+            background: #111111;
+            border-radius: 1rem;
+            max-width: 600px;
+            margin: 2rem auto;
+            padding: 2rem;
+            position: relative;
+        }
+        .payment-method {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .payment-method:hover {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .payment-method.selected {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .payment-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: color 0.3s ease;
+        }
+        .close-modal:hover {
+            color: white;
+        }
+        .currency-switcher, .language-switcher {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .currency-btn, .language-btn {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .currency-btn:hover, .language-btn:hover {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+        }
+        .currency-btn.active, .language-btn.active {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+        .payment-notice {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid #10B981;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .payment-notice i {
+            color: #10B981;
+            margin-right: 0.5rem;
+        }
+        .payment-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .info-section-spacing {
+            margin-bottom: 1.5rem;
+        }
+        @media (max-width: 639px) {
+            header {
+                padding: 0.75rem;
+            }
+            .logo-icon img {
+                width: 24px;
+                height: 24px;
+            }
+            .logo-text {
+                font-size: 1rem;
+            }
+            main {
+                padding: 0.5rem;
+                margin-top: 3rem;
+            }
+            .max-w-\[1200px\] {
+                padding: 0 0.5rem;
+            }
+            h1 {
+                font-size: 1.25rem;
+                line-height: 1.5rem;
+            }
+            .bg-\[\#111111\] {
+                padding: 0.75rem;
+            }
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .currency-switcher {
+                gap: 0.25rem;
+                flex-wrap: wrap;
+            }
+            .currency-btn {
+                padding: 0.25rem 0.375rem;
+                font-size: 0.75rem;
+            }
+            .modal-content {
+                width: 95%;
+                max-width: 350px;
+                margin: 0.75rem auto;
+                padding: 1rem;
+            }
+            .payment-method {
+                padding: 0.75rem;
+            }
+            .payment-icon {
+                width: 36px;
+                height: 36px;
+                margin-bottom: 0.75rem;
+            }
+            .payment-method h3 {
+                font-size: 1rem;
+            }
+            .payment-method p {
+                font-size: 0.875rem;
+            }
+            .user-identifier {
+                font-size: 0.75rem;
+            }
+            #maskedIdentifier {
+                font-size: 0.625rem;
+                max-width: 120px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            .bg-\[\#111111\] dl dt {
+                font-size: 0.75rem;
+            }
+            .bg-\[\#111111\] dl dd {
+                font-size: 0.625rem;
+            }
+            .info-section-spacing {
+                margin-bottom: 1rem;
+            }
+            .flex.gap-2 {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+            #configLink {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            .copy-btn {
+                width: 100%;
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            #generateConfigBtn {
+                width: 100%;
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            .plan-card {
+                padding: 0.75rem;
+            }
+            .plan-card h3 {
+                font-size: 1.125rem;
+            }
+            .plan-card p {
+                font-size: 0.875rem;
+            }
+            .plan-card .text-3xl {
+                font-size: 1.5rem;
+            }
+            .plan-card ul {
+                font-size: 0.875rem;
+            }
+            .plan-card button {
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+            .payment-notice {
+                font-size: 0.875rem;
+                padding: 0.75rem;
+            }
+            .payment-notice i {
+                font-size: 1rem;
+            }
+            .modal-content h2 {
+                font-size: 1.25rem;
+            }
+            .grid.grid-cols-1.md\:grid-cols-2 {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+            .flex.justify-between.items-center {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
+            }
+            .payment-btn {
+                width: 100%;
+                font-size: 0.875rem;
+                padding: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body class="bg-black text-white min-h-screen">
+    <header>
+        <div class="logo">
+            <a th:href="@{/}" class="logo-icon">
+                <img th:src="@{/images/icon.svg}" alt="HiVPN Logo">
+            </a>
+            <a th:href="@{/}" class="logo-text" style="margin-left: -0.75rem;">HiVPN</a>
+        </div>
+        <div class="header-buttons">
+            <span class="text-gray-300 font-mono text-sm user-identifier" id="userIdentifier"></span>
+            <button id="logoutBtn" class="text-gray-300 hover:text-white transition-colors">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        </div>
+    </header>
+
+    <main class="px-8 py-4 mt-16">
+        <div class="max-w-[1200px] mx-auto">
+            <h1 class="text-3xl font-extrabold mb-2 text-gray-300">Личный кабинет</h1>
+            <p class="text-gray-400 text-base mb-8 max-w-[700px]">
+                Здесь вы можете управлять своей подпиской и настройками VPN.
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <section class="bg-[#111111] rounded-xl p-6 max-w-md w-full" aria-label="Основная информация">
+                    <h2 class="font-bold text-xl mb-4">Основная информация</h2>
+                    <dl class="text-gray-300">
+                        <div class="flex justify-between mb-2">
+                            <dt class="font-semibold">Идентификатор</dt>
+                            <dd class="text-gray-500 lowercase user-identifier" id="maskedIdentifier"></dd>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <dt class="font-semibold">Статус</dt>
+                            <dd class="text-green-500 font-bold">Активен</dd>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <dt class="font-semibold">Осталось трафика</dt>
+                            <dd class="text-gray-500">∞</dd>
+                        </div>
+                        <div class="flex justify-between mb-2">
+                            <dt class="font-semibold">Оплачено до</dt>
+                            <dd class="text-gray-500">31.12.2025</dd>
+                        </div>
+                        <div class="info-section-spacing"></div>
+                        <div class="flex justify-between mb-2">
+                            <dt class="font-semibold">Валюта</dt>
+                            <dd class="currency-switcher">
+                                <button class="currency-btn active" data-currency="RUB">₽</button>
+                                <button class="currency-btn" data-currency="USD">$</button>
+                                <button class="currency-btn" data-currency="EUR">€</button>
+                            </dd>
+                        </div>
+                    </dl>
+                    <div class="mt-4 text-center">
+                        <button id="deleteAccountBtn" class="text-gray-500 text-xs underline hover:text-gray-400 transition-colors">
+                            Удалить аккаунт
+                        </button>
+                    </div>
+                </section>
+
+                <section class="bg-[#111111] rounded-xl p-6 max-w-3xl w-full" aria-label="Конфигурация">
+                    <h2 class="font-bold text-xl mb-4">Конфигурация</h2>
+                    <div class="bg-black border border-gray-800 rounded-lg p-4">
+                        <p class="text-gray-300 mb-4">Скопируйте конфигурационную ссылку для вставки в приложение:</p>
+                        <div class="flex gap-2">
+                            <input type="text" id="configLink" class="flex-1 bg-[#111111] border border-gray-800 rounded px-4 py-2 text-gray-300" readonly>
+                            <button id="copyConfigBtn" class="copy-btn bg-white text-black font-mono text-xs uppercase px-5 py-2 rounded" disabled>
+                                Копировать
+                            </button>
+                        </div>
+                        <button id="generateConfigBtn" class="mt-4 bg-blue-500 hover:bg-blue-600 text-white font-mono text-xs uppercase px-5 py-2 rounded">
+                            Сгенерировать ссылку
+                        </button>
+                    </div>
+                </section>
+            </div>
+
+            <section class="bg-[#111111] rounded-xl p-6 max-w-[1200px] w-full mt-6" aria-label="Тарифы">
+                <h2 class="font-bold text-xl mb-4 flex items-center gap-2">
+                    Тарифы
+                    <span class="bg-gray-700 text-gray-300 text-xs font-mono rounded px-2 py-0.5">Пробный</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="plan-card selected bg-white/5 rounded-2xl p-6 border-2 border-[#10B981]">
+                        <h3 class="text-xl font-bold mb-2">Пробный</h3>
+                        <p class="text-white/60 mb-4">Базовый функционал для тестирования</p>
+                        <div class="text-3xl font-bold mb-6">Бесплатно</div>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>1 ГБ трафика</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Базовые серверы</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Скорость до 100 Мбит/с</span>
+                            </li>
+                        </ul>
+                        <button class="w-full bg-[#10B981] text-white py-3 rounded-xl font-bold hover:bg-[#0D9668] transition-colors">
+                            Выбран
+                        </button>
+                    </div>
+
+                    <div class="plan-card bg-white/5 rounded-2xl p-6 border-2 border-white/10">
+                        <h3 class="text-xl font-bold mb-2">Базовый</h3>
+                        <p class="text-white/60 mb-4">Для повседневного использования</p>
+                        <div class="text-3xl font-bold mb-6">60 ₽<span class="text-base font-normal">/мес</span></div>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>10 ГБ трафика</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Все серверы</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Скорость до 500 Мбит/с</span>
+                            </li>
+                        </ul>
+                        <button class="w-full bg-white/10 text-white py-3 rounded-xl font-bold hover:bg-white/20 transition-colors">
+                            Выбрать
+                        </button>
+                    </div>
+
+                    <div class="plan-card bg-white/5 rounded-2xl p-6 border-2 border-white/10">
+                        <h3 class="text-xl font-bold mb-2">Премиум</h3>
+                        <p class="text-white/60 mb-4">Максимальная производительность</p>
+                        <div class="text-3xl font-bold mb-6">100 ₽<span class="text-base font-normal">/мес</span></div>
+                        <ul class="space-y-3 mb-6">
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Безлимитный трафик</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Приоритетные серверы</span>
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <i class="fas fa-check text-[#10B981]"></i>
+                                <span>Скорость до 1 Гбит/с</span>
+                            </li>
+                        </ul>
+                        <button class="w-full bg-white/10 text-white py-3 rounded-xl font-bold hover:bg-white/20 transition-colors">
+                            Выбрать
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal">&times;</button>
+            <h2 class="text-2xl font-bold mb-6">Выберите способ оплаты</h2>
+            <div class="payment-notice">
+                <i class="fas fa-info-circle"></i>
+                <span>В данный момент оплата недоступна.</span>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <div class="payment-method" data-method="bank">
+                    <div class="payment-icon">
+                        <i class="fas fa-university text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Банковская карта</h3>
+                    <p class="text-gray-400">Оплата картой Visa, Mastercard или МИР</p>
+                </div>
+                <div class="payment-method" data-method="crypto">
+                    <div class="payment-icon">
+                        <i class="fab fa-bitcoin text-2xl"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-2">Криптовалюта</h3>
+                    <p class="text-gray-400">Оплата Bitcoin, Ethereum или USDT</p>
+                </div>
+            </div>
+            <div class="flex justify-between items-center">
+                <div class="text-xl font-bold">
+                    Итого: <span id="paymentAmount">60 ₽</span>
+                </div>
+                <button id="proceedPayment" class="payment-btn bg-[#10B981] text-white px-8 py-3 rounded-xl font-bold hover:bg-[#0D9668] transition-colors" disabled>
+                    Оплатить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-2xl font-bold mb-4">Удалить аккаунт</h2>
+            <p class="text-gray-400 mb-6">Вы уверены, что хотите удалить аккаунт? Это действие необратимо.</p>
+            <div class="mb-6">
+                <input type="text" id="deleteConfirmation" class="w-full bg-[#111111] border border-gray-800 rounded px-4 py-2 text-gray-300" placeholder="Введите 'Delete' чтобы подтвердить">
+            </div>
+            <div class="flex justify-end gap-4">
+                <button id="cancelDeleteBtn" class="px-6 py-2 border border-gray-700 rounded-lg hover:bg-gray-800 transition-colors">
+                    Отмена
+                </button>
+                <button id="confirmDeleteBtn" class="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors opacity-50 cursor-not-allowed" disabled>
+                    Удалить
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const user = /*[[${user}]]*/ {};
+        document.getElementById('userIdentifier').textContent = user.username;
+        document.getElementById('maskedIdentifier').textContent = user.accessToken;
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            window.location.href = '/';
+        });
+        const paymentModal = document.getElementById('paymentModal');
+        const closePaymentModal = document.querySelector('.close-modal');
+        const paymentMethods = document.querySelectorAll('.payment-method');
+        const proceedPaymentBtn = document.getElementById('proceedPayment');
+        let selectedPlan = null;
+        document.querySelectorAll('.plan-card button').forEach(button => {
+            button.addEventListener('click', () => {
+                const planCard = button.closest('.plan-card');
+                const planName = planCard.querySelector('h3').textContent;
+                const planPrice = planCard.querySelector('.text-3xl').textContent;
+                if (planPrice === 'Бесплатно') {
+                    console.log('Активация бесплатного тарифа');
+                    return;
+                }
+                
+                selectedPlan = {
+                    name: planName,
+                    price: planPrice
+                };
+                
+                document.getElementById('paymentAmount').textContent = planPrice;
+                paymentModal.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+
+        closePaymentModal.addEventListener('click', () => {
+            paymentModal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === paymentModal) {
+                paymentModal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        paymentMethods.forEach(method => {
+            method.addEventListener('click', () => {
+                paymentMethods.forEach(m => m.classList.remove('selected'));
+                method.classList.add('selected');
+                proceedPaymentBtn.disabled = true;
+            });
+        });
+
+        proceedPaymentBtn.addEventListener('click', () => {
+            alert('Оплата временно недоступна');
+        });
+
+        document.getElementById('generateConfigBtn').addEventListener('click', () => {
+            const generateBtn = document.getElementById('generateConfigBtn');
+            const copyBtn = document.getElementById('copyConfigBtn');
+            const configLink = document.getElementById('configLink');
+
+            generateBtn.disabled = true;
+            generateBtn.textContent = 'Генерация...';
+
+            const accessToken = window.location.pathname.split('/').pop();
+            
+            fetch(`/api/generate-config/${accessToken}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    configLink.value = data.configUrl;
+                    copyBtn.disabled = false;
+                } else {
+                    throw new Error(data.message || 'Ошибка при генерации конфигурации');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Ошибка при генерации конфигурации: ' + error.message);
+            })
+            .finally(() => {
+                generateBtn.disabled = false;
+                generateBtn.textContent = 'Сгенерировать ссылку';
+            });
+        });
+
+        document.getElementById('copyConfigBtn').addEventListener('click', () => {
+            const configLink = document.getElementById('configLink');
+            if (!configLink.value) return;
+            
+            configLink.select();
+            document.execCommand('copy');
+            
+            const copyBtn = document.getElementById('copyConfigBtn');
+            copyBtn.textContent = '✓';
+            copyBtn.classList.add('copied');
+            
+            setTimeout(() => {
+                copyBtn.textContent = 'Копировать';
+                copyBtn.classList.remove('copied');
+            }, 2000);
+        });
+
+        const exchangeRates = {
+            RUB: 1,
+            USD: 0.011,
+            EUR: 0.01
+        };
+
+        function convertPrice(price, fromCurrency, toCurrency) {
+            const rubPrice = price / exchangeRates[fromCurrency];
+            return (rubPrice * exchangeRates[toCurrency]).toFixed(2);
+        }
+
+        const currencyButtons = document.querySelectorAll('.currency-btn');
+        let currentCurrency = localStorage.getItem('selectedCurrency') || 'RUB';
+
+        function setInitialCurrency() {
+            currencyButtons.forEach(btn => {
+                if (btn.dataset.currency === currentCurrency) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            document.querySelectorAll('.plan-card').forEach(card => {
+                const priceElement = card.querySelector('.text-3xl');
+                const priceText = priceElement.textContent;
+
+                if (priceText === 'Бесплатно') return;
+
+                const price = parseFloat(priceText);
+                const newPrice = convertPrice(price, 'RUB', currentCurrency);
+                priceElement.textContent = `${newPrice} ${currentCurrency === 'RUB' ? '₽' : currentCurrency === 'USD' ? '$' : '€'}`;
+            });
+        }
+
+        setInitialCurrency();
+
+        currencyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const newCurrency = button.dataset.currency;
+                if (newCurrency === currentCurrency) return;
+
+                currencyButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                document.querySelectorAll('.plan-card').forEach(card => {
+                    const priceElement = card.querySelector('.text-3xl');
+                    const priceText = priceElement.textContent;
+
+                    if (priceText === 'Бесплатно') return;
+
+                    const price = parseFloat(priceText);
+                    const newPrice = convertPrice(price, currentCurrency, newCurrency);
+                    priceElement.textContent = `${newPrice} ${newCurrency === 'RUB' ? '₽' : newCurrency === 'USD' ? '$' : '€'}`;
+                });
+
+                currentCurrency = newCurrency;
+                localStorage.setItem('selectedCurrency', currentCurrency);
+            });
+        });
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        let currentLanguage = localStorage.getItem('selectedLanguage') || 'ru';
+
+        function setInitialLanguage() {
+            languageButtons.forEach(btn => {
+                if (btn.dataset.lang === currentLanguage) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        setInitialLanguage();
+
+        languageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const newLanguage = button.dataset.lang;
+                if (newLanguage === currentLanguage) return;
+
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                currentLanguage = newLanguage;
+                localStorage.setItem('selectedLanguage', currentLanguage);
+
+                console.log(`Язык изменен на ${newLanguage}`);
+            });
+        });
+
+        const deleteAccountModal = document.getElementById('deleteAccountModal');
+        const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+        const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+        const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+        const deleteConfirmation = document.getElementById('deleteConfirmation');
+
+        deleteAccountBtn.addEventListener('click', () => {
+            deleteAccountModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            deleteConfirmation.value = '';
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        });
+
+        cancelDeleteBtn.addEventListener('click', () => {
+            deleteAccountModal.style.display = 'none';
+            document.body.style.overflow = '';
+            deleteConfirmation.value = '';
+            confirmDeleteBtn.disabled = true;
+            confirmDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+        });
+
+        deleteConfirmation.addEventListener('input', () => {
+            const isDelete = deleteConfirmation.value === 'Delete';
+            confirmDeleteBtn.disabled = !isDelete;
+            if (isDelete) {
+                confirmDeleteBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            } else {
+                confirmDeleteBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        });
+
+        confirmDeleteBtn.addEventListener('click', () => {
+            if (deleteConfirmation.value === 'Delete') {
+                // Показываем индикатор загрузки
+                confirmDeleteBtn.disabled = true;
+                confirmDeleteBtn.textContent = 'Удаление...';
+
+                const accessToken = window.location.pathname.split('/').pop();
+                
+                fetch(`/api/delete-account/${accessToken}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        window.location.href = '/';
+                    } else {
+                        throw new Error(data.message || 'Ошибка при удалении аккаунта');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Ошибка при удалении аккаунта: ' + error.message);
+                    confirmDeleteBtn.disabled = false;
+                    confirmDeleteBtn.textContent = 'Удалить';
+                });
+            }
+        });
+    </script>
+</body>
+</html> 

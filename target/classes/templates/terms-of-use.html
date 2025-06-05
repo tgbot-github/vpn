@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Правила использования - HiVPN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/icon.svg}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            font-family: 'JetBrains+Mono', monospace;
+            background: black;
+            color: white;
+        }
+        .content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: black;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+        .logo-icon {
+            margin-right: 0.75rem;
+        }
+        .back-button {
+            color: white;
+            text-decoration: none;
+            font-size: 1.25rem;
+        }
+        .main-content {
+            margin-top: 60px;
+        }
+        h1 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #10B981;
+            margin-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin: 1.5rem 0;
+            color: #10B981;
+        }
+        p {
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+        ul {
+            margin: 1rem 0;
+            padding-left: 2rem;
+        }
+        li {
+            margin: 0.5rem 0;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="logo">
+        <a th:href="@{/}" class="logo-icon">
+            <img th:src="@{/images/icon.svg}" alt="HiVPN Logo">
+        </a>
+        <a th:href="@{/}" class="logo-text" style="margin-left: -0.75rem;">HiVPN</a>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="content">
+        <h1>Правила использования</h1>
+
+        <p>Дата последнего обновления: 03.06.2025</p>
+
+        <h2>1. Общие положения</h2>
+        <p>Настоящие правила использования определяют условия использования сервиса HiVPN.</p>
+
+        <h2>2. Обязательства пользователей</h2>
+        <p>Пользователи обязуются:</p>
+        <ul>
+            <li>Использовать сервис только для легальных целей</li>
+            <li>Не распространять вредоносное ПО через сервис</li>
+            <li>Не использовать сервис для спама или массовой рассылки</li>
+            <li>Не нарушать права третьих лиц</li>
+        </ul>
+
+        <h2>3. Обязательства сервиса</h2>
+        <p>HiVPN обязуется:</p>
+        <ul>
+            <li>Обеспечивать стабильную работу сервиса</li>
+            <li>Защищать персональные данные пользователей</li>
+            <li>Предоставлять техническую поддержку</li>
+            <li>Соблюдать конфиденциальность передаваемых данных</li>
+        </ul>
+
+        <h2>4. Ответственность</h2>
+        <p>Пользователь несет ответственность за:</p>
+        <ul>
+            <li>Соблюдение правил использования</li>
+            <li>Безопасность своих учетных данных</li>
+            <li>Легальность использования сервиса</li>
+        </ul>
+
+        <h2>5. Изменения правил</h2>
+        <p>Мы оставляем за собой право вносить изменения в данные правила использования. Все изменения будут опубликованы на этом сайте.</p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HiVPN - Безопасный и быстрый VPN сервис</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/icon.svg}">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            font-family: 'JetBrains+Mono', monospace;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 2rem;
+            background: black;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+        .logo a {
+            text-decoration: none;
+            color: inherit;
+        }
+        .logo a:hover {
+            opacity: 1;
+        }
+        .logo-icon {
+            margin-right: 0.75rem;
+        }
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .download-button {
+            white-space: nowrap;
+        }
+        .login-button {
+            white-space: nowrap;
+        }
+        .language-switcher {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+        .language-btn {
+            padding: 0.25rem 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.6);
+        }
+        .language-btn:hover {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            color: white;
+        }
+        .language-btn.active {
+            border-color: #10B981;
+            background: rgba(16, 185, 129, 0.1);
+            color: #10B981;
+        }
+        .login-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        @media (max-width: 639px) {
+            header {
+                padding: 0.75rem;
+            }
+            .logo-icon img {
+                width: 24px;
+                height: 24px;
+            }
+            .logo-text {
+                font-size: 1rem;
+            }
+            .header-buttons {
+                gap: 0.5rem;
+            }
+            .download-button, .login-button {
+                font-size: 0.875rem;
+                padding: 0.375rem 0.5rem;
+            }
+            .hero {
+                padding: 4rem 0.75rem 1.5rem;
+            }
+            .hero-content h1 {
+                font-size: 1.25rem;
+                line-height: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            .section {
+                padding: 0.75rem;
+                margin: 0.25rem;
+            }
+            .section-header h2 {
+                font-size: 1.125rem;
+            }
+            .bg-black.text-white {
+                padding: 1.5rem 0.75rem;
+            }
+            .bg-black.text-white h1 {
+                font-size: 1.5rem;
+                line-height: 1.75rem;
+            }
+            .grid-cols-1 {
+                grid-template-columns: 1fr;
+            }
+            footer {
+                padding: 1.5rem 0.75rem;
+            }
+            .modal-content {
+                width: 95%;
+                max-width: 350px;
+                margin: 0.75rem auto;
+                padding: 1rem;
+            }
+            .language-switcher {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 0.25rem;
+            }
+            .language-btn {
+                font-size: 0.875rem;
+                padding: 0.25rem 0.375rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <a th:href="@{/}" class="logo-icon">
+                <img th:src="@{/images/icon.svg}" alt="HiVPN Logo">
+            </a>
+            <a th:href="@{/}" class="logo-text" style="margin-left: -0.75rem;">HiVPN</a>
+        </div>
+        <div class="header-buttons">
+            <a href="#" class="download-button">Скачать</a>
+            <div class="login-section">
+                <a th:href="@{/dashboard}" id="dashboardLink" class="login-button" style="display: none;">ЛК</a>
+                <a th:href="@{/login}" id="loginLink" class="login-button">Войти</a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="hero-content">
+                <h1 class="gradient-text">Конфиденциальный, надёжный, быстрый</h1>
+            </div>
+            <div class="hero-background">
+                <svg class="satellite-illustration" viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+                    <g transform="translate(600, 150)">
+                        <rect x="-40" y="-30" width="80" height="60" fill="none" stroke="#FFFFFF" stroke-width="3"/>
+                        <line x1="-60" y1="0" x2="-40" y2="0" stroke="#FFFFFF" stroke-width="3"/>
+                        <line x1="40" y1="0" x2="60" y2="0" stroke="#FFFFFF" stroke-width="3"/>
+                        <line x1="0" y1="-50" x2="0" y2="-30" stroke="#FFFFFF" stroke-width="3"/>
+                        <line x1="0" y1="30" x2="0" y2="50" stroke="#FFFFFF" stroke-width="3"/>
+                        <rect x="-120" y="-20" width="40" height="40" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                        <rect x="80" y="-20" width="40" height="40" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                    </g>
+                    
+                    <g stroke="#FFFFFF" stroke-width="2" stroke-dasharray="15,10">
+                        <path d="M600,180 L600,400"/>
+                        <path d="M550,200 L550,380"/>
+                        <path d="M650,200 L650,380"/>
+                    </g>
+                    
+                    <g transform="translate(0, 400)">
+                        <path d="M200,0 C250,-50 350,-30 400,0 C450,30 550,20 600,0 C650,-20 750,-40 800,0" 
+                              fill="none" stroke="#FFFFFF" stroke-width="4"/>
+                        <path d="M200,0 C250,50 350,30 400,0 C450,-30 550,-20 600,0 C650,20 750,40 800,0" 
+                              fill="none" stroke="#FFFFFF" stroke-width="4"/>
+                        <path d="M300,-20 C320,-30 340,-25 360,-20" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                        <path d="M500,-20 C520,-30 540,-25 560,-20" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                        <path d="M700,-20 C720,-30 740,-25 760,-20" fill="none" stroke="#FFFFFF" stroke-width="2"/>
+                    </g>
+                </svg>
+            </div>
+        </section>
+
+        <section class="expandable-sections">
+            <div class="section">
+                <div class="section-header">
+                    <h2>Безопасность и конфиденциальность</h2>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="section-content">
+                    <div class="section-text">
+                        <p>HiVPN обеспечивает максимальную защиту ваших данных:</p>
+                        <ul>
+                            <li>Шифрование военного уровня AES-256</li>
+                            <li>Строгая политика отсутствия логов</li>
+                            <li>Защита от утечек DNS и WebRTC</li>
+                            <li>Автоматическое отключение при потере соединения</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>Высокая скорость и стабильность</h2>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="section-content">
+                    <div class="section-text">
+                        <p>Наши серверы обеспечивают:</p>
+                        <ul>
+                            <li>Скорость до 1 Гбит/с</li>
+                            <li>Низкий пинг и отсутствие задержек</li>
+                            <li>Стабильное соединение 24/7</li>
+                            <li>Оптимизированные серверы по всему миру</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2>Удобство использования</h2>
+                    <span class="arrow">→</span>
+                </div>
+                <div class="section-content">
+                    <div class="section-text">
+                        <p>HiVPN делает защиту простой и доступной:</p>
+                        <ul>
+                            <li>Один клик для подключения</li>
+                            <li>Автоматический выбор лучшего сервера</li>
+                            <li>Поддержка всех популярных платформ</li>
+                            <li>Интуитивно понятный интерфейс</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="bg-black text-white px-6 sm:px-10 md:px-16 lg:px-24 py-12">
+            <div class="max-w-7xl mx-auto">
+                <h1 class="text-white font-extrabold text-[40px] leading-[48px] mb-10">
+                    Как установить
+                </h1>
+                <section class="border-t border-t-gray-800 pt-8 pb-12">
+                    <div class="flex items-start gap-6 mb-6">
+                        <span class="text-gray-600 font-mono text-[18px] leading-[24px] select-none" style="font-feature-settings: 'tnum' 1, 'lnum' 1;">
+                            01
+                        </span>
+                        <span class="text-gray-600 font-mono text-[18px] leading-[24px] select-none">
+                            /
+                        </span>
+                        <h2 class="font-extrabold text-white text-[24px] leading-[32px] max-w-[900px]">
+                            Выберите и скачайте приложение HiVPN для вашей платформы
+                        </h2>
+                    </div>
+                    <div class="flex flex-col gap-8">
+                        <div class="flex justify-center mb-8">
+                            <div class="w-24 h-24 border-2 border-white rounded-full flex items-center justify-center">
+                                <img th:src="@{/images/icon.svg}" alt="HiVPN Logo" class="w-12 h-12">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-4xl mx-auto">
+                            <a class="flex items-center justify-center border border-gray-600 rounded-md px-4 py-3 gap-3 hover:border-[#FF2D55] transition-colors unavailable" href="javascript:void(0)">
+                                <i class="fab fa-apple text-2xl"></i>
+                                <span class="text-white font-extrabold text-[16px] leading-[20px]">
+                                    Download on the<br>App Store
+                                </span>
+                            </a>
+
+                            <a class="flex items-center justify-center border border-gray-600 rounded-md px-4 py-3 gap-3 hover:border-[#FF2D55] transition-colors unavailable" href="javascript:void(0)">
+                                <i class="fab fa-android text-2xl"></i>
+                                <span class="text-white font-extrabold text-[16px] leading-[20px]">
+                                    GET IT ON<br>Google Play
+                                </span>
+                            </a>
+
+                            <a class="flex items-center justify-center border border-gray-600 rounded-md px-4 py-3 gap-3 hover:border-white transition-colors" href="/download/apk">
+                                <i class="fas fa-download text-2xl"></i>
+                                <span class="text-white font-extrabold text-[16px] leading-[20px]">
+                                    Download<br><strong>APK file</strong>
+                                </span>
+                            </a>
+
+                            <a class="flex items-center justify-center border border-gray-600 rounded-md px-4 py-3 gap-3 hover:border-[#FF2D55] transition-colors unavailable" href="javascript:void(0)">
+                                <i class="fab fa-apple text-2xl"></i>
+                                <span class="text-white font-extrabold text-[16px] leading-[20px]">
+                                    macOS
+                                </span>
+                            </a>
+
+                            <a class="flex items-center justify-center border border-gray-600 rounded-md px-4 py-3 gap-3 hover:border-[#FF2D55] transition-colors unavailable" href="javascript:void(0)">
+                                <i class="fab fa-windows text-2xl"></i>
+                                <span class="text-white font-extrabold text-[16px] leading-[20px]">
+                                    Windows
+                                </span>
+                            </a>
+
+                            <a class="flex items-center justify-center border border-gray-600 rounded-md px-4 py-3 gap-3 hover:border-[#FF2D55] transition-colors unavailable" href="javascript:void(0)">
+                                <i class="fab fa-linux text-2xl"></i>
+                                <span class="text-white font-extrabold text-[16px] leading-[20px]">
+                                    Linux
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="border-t border-t-gray-800 pt-8 mt-8">
+                    <div class="flex items-start gap-6">
+                        <span class="text-gray-600 font-mono text-[18px] leading-[24px] select-none" style="font-feature-settings: 'tnum' 1, 'lnum' 1;">
+                            02
+                        </span>
+                        <span class="text-gray-600 font-mono text-[18px] leading-[24px] select-none">
+                            /
+                        </span>
+                        <h2 class="font-extrabold text-white text-[24px] leading-[32px] max-w-[900px]">
+                            Скопируйте ссылку у вашего VPN провайдера и вставьте в приложение
+                        </h2>
+                    </div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>HiVPN</h3>
+                <p>Ваш надежный партнер в мире безопасного интернета. Мы обеспечиваем максимальную защиту и конфиденциальность ваших данных.</p>
+            </div>
+            <div class="footer-section">
+                <a href="https://t.me/yo_vpn_bot" class="telegram-link">
+                    <svg class="telegram-icon" viewBox="0 0 24 24" width="24" height="24">
+                        <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.29-.49.8-.75 3.12-1.36 5.2-2.26 6.24-2.7 2.98-1.24 3.6-1.45 4.01-1.46.09 0 .28.02.4.09.11.06.18.14.21.24.02.1.02.2.01.3z"/>
+                    </svg>
+                    @yo_vpn_bot
+                </a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p class="copyright">© 2025 HiVPN. Все права защищены</p>
+        </div>
+    </footer>
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Вход в HiVPN</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="text-center mb-6">
+                    <p class="text-gray-400 mb-4">В данный момент вход в личный кабинет доступен только через Telegram бота.</p>
+                    <a href="https://t.me/yo_vpn_bot" class="telegram-bot-btn inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#0088cc] text-white rounded-lg hover:bg-[#0077b3] transition-colors">
+                        <svg class="telegram-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.29-.49.8-.75 3.12-1.36 5.2-2.26 6.24-2.7 2.98-1.24 3.6-1.45 4.01-1.46.09 0 .28.02.4.09.11.06.18.14.21.24.02.1.02.2.01.3z"/>
+                        </svg>
+                        Перейти в Telegram бот
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const section = header.parentElement;
+                const content = section.querySelector('.section-content');
+                
+                document.querySelectorAll('.section').forEach(s => {
+                    if (s !== section) {
+                        s.classList.remove('active');
+                    }
+                });
+                
+                section.classList.toggle('active');
+            });
+        });
+
+        const modal = document.getElementById('loginModal');
+        const closeModal = document.querySelector('.close-modal');
+
+        document.getElementById('loginLink').addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        });
+
+        closeModal.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+        });
+
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+            }
+        });
+
+        function checkAuth() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn');
+            const userIdentifier = localStorage.getItem('userIdentifier');
+            
+            if (isLoggedIn === 'true' && userIdentifier) {
+                document.getElementById('dashboardLink').style.display = 'inline-flex';
+                document.getElementById('loginLink').style.display = 'none';
+            } else {
+                document.getElementById('dashboardLink').style.display = 'none';
+                document.getElementById('loginLink').style.display = 'inline-flex';
+            }
+        }
+
+        checkAuth();
+
+        document.querySelector('.download-button').addEventListener('click', (e) => {
+            e.preventDefault();
+            const installSection = document.querySelector('.bg-black.text-white');
+            installSection.scrollIntoView({ behavior: 'smooth' });
+        });
+
+        const languageButtons = document.querySelectorAll('.language-btn');
+        let currentLanguage = localStorage.getItem('selectedLanguage') || 'ru';
+
+        function setInitialLanguage() {
+            languageButtons.forEach(btn => {
+                if (btn.dataset.lang === currentLanguage) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        setInitialLanguage();
+
+        languageButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const newLanguage = button.dataset.lang;
+                if (newLanguage === currentLanguage) return;
+
+                languageButtons.forEach(btn => btn.classList.remove('active'));
+                button.classList.add('active');
+
+                currentLanguage = newLanguage;
+                localStorage.setItem('selectedLanguage', currentLanguage);
+
+                console.log(`Язык изменен на ${newLanguage}`);
+            });
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('identifier').value;
+            const password = document.getElementById('password').value;
+
+            if (identifier && password) {
+                localStorage.setItem('isLoggedIn', 'true');
+                localStorage.setItem('userIdentifier', identifier);
+                window.location.href = 'dashboard.html';
+            }
+        });
+
+        document.querySelectorAll('.unavailable').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                return false;
+            }, true);
+        });
+    </script>
+</body>
+</html> 

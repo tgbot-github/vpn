@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1920" height="1080" viewBox="0 0 1920 1080" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="1920" height="1080" fill="#000000"/>
+
+    <g transform="translate(960, 300)">
+
+        <path d="M0 -100c-55.2 0-100 44.8-100 100s44.8 100 100 100 100-44.8 100-100-44.8-100-100-100z" fill="none" stroke="#FFFFFF" stroke-width="4" stroke-opacity="0.2"/>
+        
+
+        <path d="M0 -50v100M-50 0h100" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-opacity="0.2"/>
+        
+
+        <path d="M-200 0h100M200 0h100" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round" stroke-dasharray="8 8" stroke-opacity="0.2"/>
+    </g>
+    
+
+    <g transform="translate(960, 540)">
+        <path d="M-400 0 Q-300 -100 -200 0 T0 0 T200 0 T400 0" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-opacity="0.1"/>
+        <path d="M-400 20 Q-300 -80 -200 20 T0 20 T200 20 T400 20" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-opacity="0.1"/>
+        <path d="M-400 40 Q-300 -60 -200 40 T0 40 T200 40 T400 40" stroke="#FFFFFF" stroke-width="2" fill="none" stroke-opacity="0.1"/>
+    </g>
+</svg> 
